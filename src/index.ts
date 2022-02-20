@@ -1,6 +1,7 @@
 import { Client, Collection, Message, MessageEmbed } from 'discord.js';
 import { readdir } from 'fs';
 import config from './util/global';
+import { DEBUG } from './config.json';
 
 export const bot: Client = new Client({ intents: 49151 }); //use 48893 if no privileged intents (GUILD_PRESENCES and GUILD_MEMBERS)
 
@@ -125,3 +126,7 @@ readdir(`${__dirname}\\events/`, (err, files) => {
 });
 
 bot.login(config.TOKEN);
+
+process.on('uncaughtException', function (err) {
+  if (DEBUG) console.log('Caught exception: ' + err);
+});

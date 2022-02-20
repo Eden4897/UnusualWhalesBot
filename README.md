@@ -1,213 +1,157 @@
-# Typescript template for discord bots
-## Template cleanup
-### Windows
-```
-run template-cleanup.bat
-```
-### Non Windows
-1. Add these 2 lines into the gitignore
-```
-!package-lock.json
-!package.json
-```
-2. Delete readme.md and template-cleanup.bat
-3. Commit the changes to git (not compulsary)
-## Setup
-Delete the .vscode folder if you are not using visual studio code.
+# Bot setup guide
 
-Install typescript if you have not already:
-```
-npm i typescript -g
-```
-Then run
-```
-npm init -y
-npm i discord.js @types/node @types/ws
-```
-### Setup with config.json
-Rename `config.json.example` to `config.json` and fill in the `PREFIX` and `TOKEN`.
+Please look at section [**Hosting the bot**](#hosting-the-bot) first, and decide which plan you would like. If you want me to host the bot for you, you only have to do sections [**Creating the bot account**](#creating-the-bot-account) and [**Configuration**](#configuration), and provide me details such as the bot token that needs to be filled into `config.json`.
 
-### Setup with env variables
-Delete `config.json.example`, and use the environment variables `PREFIX` and `TOKEN`.
+## Creating the bot account
 
-## Traspiling and running
-### VSC
-If you are using visual studio code, you can just press `f5` to run the program. This will transpile and run the code for you in debug mode.
+1. Go to the [discord developer portal](https://discord.com/developers/applications)
+2. Login to your discord account
+3. Click on `New Application`
+4. Enter the name of your bot and press create
+5. Click on the `Bot` tab on the left menu bar
+6. Click on `Add Bot`
+7. Scroll down and enable `PRESENCE INTENT` and `SERVER MEMBERS INTENT`, then press `Save Changes`
+8. Press `OAuth2` on the left menu bar
+9. Also select admin in bot permissions to give the bot the permissions it needs
+10. Check the `bot` checkbox and press `Copy`
+11. You can paste this link in your browser and add this bot to any discord server you want. You can use this link again to add the bot into other servers!
 
-### Non VSC
-If not, you will have to transpile the typescript to javascript yourself. To transpile the typescript, run:
-```
-tsc
-```
-then this to run the transpiled javascript:
-```
-cd src
-node index.js
-```
+## Setting up the files
 
-You can also have typescript watch for changes and automatically transpile if changes are found:
-```
-tsc --watch
-```
-Then, open a new terminal and
-```
-cd src
-```
-then run this whenever you made some changes to the typescript and want to run the transpiled js
-```
-node index.js
-```
+1. You should have git pre-installed if you are using mac or linux. If not, download and install git [here](https://git-scm.com/downloads)
+2. Go to the github page of this repo and press `⬇Code`, select `HTTPS`, then copy the link
+3. Start a terminal
+4. Use the `cd` command to navigate to wherever you want the bot files to be placed in
+5. Type `git clone [paste in the link here]` (add sudo if you are on linux and it gives you an error)
+6. Login to your github account in the terminal
+7. Navigate to the folder that contains the bot's code in a file explorer
+8. Rename all files ending with `.json.example` to `.json`, removing the `.example`, such as renaming `config.json.example` to `config.json`
 
-# Usage
-## Command handler
-The command handler loads all commands from the `src/commands` folder. All commands must use the `Command` interface which can be imported from `src/index.js`. Commands can be placed in nested folders inside `src/commands` folder since the command handler can read files recursively. Here are the properties of the interface.
+## Configuration
 
-### The `name` property
-A string that would be the command's name in the bot
-#### Example:
-```
-name: `ping`
-```
+### Getting the bot token
 
-### The `description` property
-A string that would be the command's description in the information embed
-#### Example:
-```
-description: `Gives you the ping of the bot in miliseconds`
-```
+1. Click on the `Bot` tab on the left menu bar
+2. Click on `Copy` under `TOKEN`. Remember, never give this token to strangers, as they can gain full access to your bot if they gain access to this token!
+3. Fill in the token into config.json
 
-### The `usage` property
-A string that lists out all the variants of the command. Use `{p}` in place of the command. All spaces that follow a new line will be trimmed away for code styling purposes.
-#### Example:
-```
-usage: `{p}purge bot [amount]
-        {p}purge human [amount]
-        {p}purge images [amount]`
-```
-The string will be trimmed to this:
-```
-{p}purge bot [amount]
-{p}purge human [amount]
-{p}purge images [amount]
-```
+   Here is an example:
 
-### The `example` property
-A string that demonstrates how all variants of the command would be used. Use `{p}` in place of the command. All spaces that follow a new line will be trimmed away for code styling purposes.
+   ```
+   ...
+   "TOKEN": "ODE4NDY3Mzc0NzE3OTkzMDAx.YEYfJA.j_vM2raH-LOsGDcZGavrBjqk9hk",
+   ...
+   ```
 
-#### Example:
-```
-usage: `{p}purge bot 20
-        {p}purge human 50
-        {p}purge images 80`
-```
-The string will be trimmed to this:
-```
-{p}purge bot 20
-{p}purge human 50
-{p}purge images 80
-```
+<!--
+### Getting the client ID and secret
 
-### The `admin` property (optional)
-A boolean that indicates if the user needs `MANAGE_GUILD` permissions to use this command. If this is set to true, the command can only be used in a guild.
+1. Click on the `General Information` tab on the left menu bar
+2. Copy the `CLIENT ID`
+3. Fill in the ID into config.json
 
-Default: `false`
+   Here is an example:
+   ```
+   ...
+   "ID": "761048219479421520",
+   ...
+   ```
+4. Copy the `CLIENT SECRET`
+5. Fill in the secret into config.json
 
-#### Example:
-```
-admin: true
-```
+   Here is an example:
+   ```
+   ...
+   "SECRET": "c9sPUBgO1cj4y3v-wK9rNKb5jOVgkiIe",
+   ...
+   ```
+-->
 
-### The `type` property (optional)
-An enum value from the enum `CommandType` which can be imported from `src/index.js`.
-* `CommandType.All`: The command can be used in DMs and guilds
-* `CommandType.DM`: The command can only be used in DMs
-* `CommandType.Guild`: The command can only be used in guilds
+<!--
+### Setting up ngrok
+1. Go to the [ngrok dashboard](https://dashboard.ngrok.com/get-started/your-authtoken) to sign up and copy your token
+2. Fill in the auth token into `NGROK_TOKEN`
 
-Default: `CommandType.All`
+   Here is an example:
+   ```
+   ...
+   "NGROK_TOKEN": "1kDVWkDK4Wh4WlgyNlgShjZbF10_5TrxVEV1Csh9nBnRPaAUz",
+   ...
+   ```
+->
 
-#### Example:
-```
-usage: `{p}purge bot 20
-        {p}purge human 50
-        {p}purge images 80`
-```
-The string will be trimmed to this:
-```
-{p}purge bot 20
-{p}purge human 50
-{p}purge images 80
-```
+<!--
+### Setting up the email
 
-## The `cd` property (optional)
-A number that represents the cooldown between another use of this command of the same user (in ms).
+1. Create a new gmail adress or use an existing one
+2. Enable less secure app access (here)[https://myaccount.google.com/lesssecureapps]
+3. Fill in the email adress and password in config.json (EMAIL_USER and EMAIL_PASS)
+-->
 
-Default: `0`
+<!--
+### How to set up google APIs
+1. Go to [google developers console](https://console.developers.google.com/)
+2. Create a new project
+3. Press `+ENABLE APIA AND SERVICES`
+4. Search for the API(s) that you want to enable and enable them
+5. Go to back to the project page
+6. Click on `Credentials` on the left menu bar
+7. Click `+CREATE CREDENTIALS`
+8. Select `Service account`
+9. Fill in the details (does not matter) and press `CREATE`
+10. Chose the role by hovering over the drop down > Basic > Owner
+11. Press `Continue`
+12. Press `Done`
+13. Now click into the new service account that you created in the Credentials page
+14. Click on `Keys`, then `Add Key`, then `Create New Key`
+15. Chose `JSON`, and click `Create`
+16. Rename the JSON file that you just downloaded to `client-secret.json` and place it inside your bot's foler
 
-#### Example:
-```
-cd: 1000
-```
+### How to get the service account's adress
+1. Open the JSON file that you just downloaded
+2. The email is in line 6, like this: `"client_email": "<email>"`
 
-### The `aliases` property (optional)
-An array of strings that can also be used to call the command other than the `name`.
+### Additional steps for some APIs
+#### Google Sheets
+1. Go to your google sheet document in your browser
+2. The URL should look something like this: `https://docs.google.com/spreadsheets/d/<DOC-ID>`
+3. Copy the ID in the URL and paste it in the `config.json`
+4. Return to your google sheet document
+5. Press `Share`
+6. Share the document to the service account's adress and give it editor perms
 
-Default: `[]`
+#### Google Vision
+1. Enable billing for your project [here](https://cloud.google.com/billing/docs/how-to/modify-project?visit_id=637510599696575187-2745866112&rd=1#enable-billing).
+-->
 
-#### Example:
-```
-aliases: ['foo', 'bar']
-```
+## Hosting the bot
 
-## The `args` property (optional)
-An array of enum values of `ArgumentType` or array of enum values of `ArgumentType`. This will be used to check if the command entered by the user is valid. If the arguments entered by the users do not match the `ArgumentType`s, an help embed will be automatically sent with the details from the `name`, `description`, `usage` and `example` properties. Spaces that are wrapped with ""s will not be spliced away, to allow for arguments that contains spaces.
+You have 3 options:
 
-Posible values:
-* `Number`
-* `PositiveNumber`
-* `NonZeroPositiveNumber`
-* `Integer`
-* `PositiveInteger`
-* `NonZeroPositiveInteger`
-* `Alphanumeric`
-* `Alphabetic`
-* `Lowercase`
-* `Uppercase`
-* `String`
-* `MemberMention`: a string with the syntax: `<@18-DIGIT-ID>`
-* `ChannelMention`: a string with the syntax: `<#18-DIGIT-ID>`
-* `RoleMention`: a string with the syntax: `<@&18-DIGIT-ID>`
-* `ID`: a 18 digit id
+A. Host it locally on your computer (which needs to be on 24/7)
 
-Default: `[]`
+B. Rent a VPS yourself.
 
-#### Example:
-```
-args: [ArgumentType.MemberMention, ArgumentType.String]
-```
-If you want the user to be able to enter multiple types in the same argument, replace the enum value with an array of enum values:
-```
-args: [[ArgumentType.MemberMention, ArgumentType.ID], ArgumentType.String]
-```
+C. Pay $10 a month for me to host the bot for you.
 
-### The `execute` property
-A function that will be called when the command is ran by a member.
+For options A and B, you can pay a one-time $20 for me to help you set it up on your computer/server
+For option C, the $20 setup fee is not optional.
 
-* `bot: Client`: The discord client of the token provided in config.json
-* `msg: Message`: The discord message sent by the member that started this command
-* `args: Array<string>`: An array of arguments in the command that the member started. Note that the command itself will not be included in this array
-* `help: MessageEmbed`: The help embed that is constructed from the `name`, `description`, `usage` and `example` provided
-* `cdReset: () => any`: A function when called that will reset the cooldown of the command, allowing the user to use the comamnd right afterwards
+You will have to do the config steps above yourself anyways, since there is no way for me to access your accounts to do them for you. If you chose step A, or if you have a VPS and would like to do the setup yourself, proceed:
 
-#### Example:
-```
-async execute(bot, msg, args, help) 
-{
-    await msg.channel.send('Hi!');
-}
-```
+1. Go to the [NodeJs website](https://nodejs.org/en)
+2. Download and install NodeJs on your computer/server
+3. Start a command prompt/terminal
+4. Use the `cd` command to navigate to the folder that cointains the bot's code
+5. Type `npm i` in the terminal and then press enter
+6. Type `node build/index.js` in the terminal to run the bot! Press `ctrl + c` to stop the bot.
 
-## Event handler
-All files inside the `src/events` folder will be binded to a discord event. The event binded will be according to the name of the file (with the .ts/.js removed). The files inside the `src/events` folder should defaultly export a function. The first parameter of the function will always be a `Client`, followed with the parameters of the discord event. View the discord events and event parameters [here](https://discord.js.org/#/docs/main/stable/class/Client) under the `Event` column.
+<!--
+## After hosting the bot
 
-## Config variables
-You can inport all the config variables from `src/index.ts`, or from `src/util/global.ts`.
+1. Go to your wordpress dashboard > WooCommerce > Settings > Advanced > Webhooks
+2. Copy the payload URL in the logs
+3. Click on `Add Webhook`
+4. Fill in the Name, set the status to Active, set the topic to Order created, and then paste the payload URL under `Delivery URL`
+5. Press save webhook
+-->

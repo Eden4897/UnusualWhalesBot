@@ -1,30 +1,26 @@
 {
-  "name": "ts-bot-template",
-  "description": "A TypeScript template for discord bots.",
+  "name": "unusualwhalesbot",
   "version": "1.0.0",
+  "description": "```\r run template-cleanup.bat\r ```\r ### Non Windows\r 1. Add these 2 lines into the gitignore\r ```\r !package-lock.json\r !package.json\r ```\r 2. Delete readme.md and template-cleanup.bat\r 3. Commit the changes to git (not compulsary)\r ## Setup\r Delete the .vscode folder if you are not using visual studio code.",
   "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Eden4897/TsBotTemplate.git"
+    "url": "git+https://github.com/Eden-Freelance-Dev/UnusualWhalesBot.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Eden4897/TsBotTemplate/issues"
+    "url": "https://github.com/Eden-Freelance-Dev/UnusualWhalesBot/issues"
   },
+  "homepage": "https://github.com/Eden-Freelance-Dev/UnusualWhalesBot#readme",
   "dependencies": {
-    "discord.js": "^13.6.0"
-  },
-  "scripts": {
-    "clean": "",
-    "build": "rm build -rf && tsc --sourceMap false",
-    "start": "node build/index.js"
-  },
-  "devDependencies": {
-    "@types/node": "^14.14.35",
-    "@types/ws": "^7.4.0",
-    "typescript": "^4.2.3"
-  },
-  "homepage": "https://github.com/Eden4897/TsBotTemplate#readme"
+    "@types/node": "^17.0.18",
+    "@types/ws": "^8.2.2",
+    "discord.js": "^13.6.0",
+    "puppeteer": "^13.3.2"
+  }
 }
