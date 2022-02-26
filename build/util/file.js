@@ -29,12 +29,18 @@ class JSONArray extends JSONDatabase {
             }
         }
         if (!(0, fs_1.existsSync)(path)) {
-            (0, fs_1.writeFileSync)(path, '[]');
+            (0, fs_1.writeFileSync)(path, "[]");
         }
         return this;
     }
     at(index) {
         return this.read()[index];
+    }
+    writeAt(index, item) {
+        const _ = this.read();
+        _[index] = item;
+        this.write(_);
+        return _;
     }
     concat(other) {
         return this.write(this.read().concat(other));
@@ -96,7 +102,8 @@ class JSONArray extends JSONDatabase {
     }
     remove(condition, write = true) {
         const _ = this.read();
-        _.splice(_.findIndex(condition), 1);
+        if (_.findIndex(condition) != -1)
+            _.splice(_.findIndex(condition), 1);
         if (write) {
             this.write(_);
         }
@@ -181,7 +188,7 @@ class JSONMap extends JSONDatabase {
             }
         }
         if (!(0, fs_1.existsSync)(path)) {
-            (0, fs_1.writeFileSync)(path, '{}');
+            (0, fs_1.writeFileSync)(path, "{}");
         }
         return this;
     }
@@ -206,7 +213,7 @@ class JSONMap extends JSONDatabase {
             this.set(key, 0);
         }
         if (isNaN(this.read()[key])) {
-            throw new Error('Not a number');
+            throw new Error("Not a number");
         }
         this.set(key, this.get(key) + amount);
     }
@@ -222,10 +229,10 @@ class JSONMap extends JSONDatabase {
 }
 exports.JSONMap = JSONMap;
 class JSONScheduler extends JSONArray {
-    constructor(eventHandler, path = 'schedule.json') {
+    constructor(eventHandler, path = "schedule.json") {
         super(path);
         this.eventHandler = eventHandler;
-        index_1.bot.on('ready', async () => {
+        index_1.bot.on("ready", async () => {
             await new Promise((_) => setTimeout(_, 1000));
             this.checkEvents();
             setInterval(() => this.checkEvents(), 60 * 1000);
@@ -240,20 +247,21 @@ class JSONScheduler extends JSONArray {
     schedule(date, ...args) {
         this.push({
             date: date.toString(),
-            args
+            args,
         });
     }
 }
 exports.JSONScheduler = JSONScheduler;
-async function download(url, dest = url.split('/').pop()) {
+async function download(url, dest = url.split("/").pop()) {
+    //destination defaulted to the file name in the url
     return new Promise((res, rej) => {
         let file = (0, fs_1.createWriteStream)(dest);
         (0, https_1.get)(url, function (response) {
             response.pipe(file);
-            file.on('finish', function () {
+            file.on("finish", function () {
                 res(file.path);
             });
-        }).on('error', function (err) {
+        }).on("error", function (err) {
             (0, fs_1.unlink)(dest, () => rej(err));
         });
     });

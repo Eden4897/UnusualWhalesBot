@@ -5,8 +5,10 @@ const discord_js_1 = require("discord.js");
 const fs_1 = require("fs");
 const global_1 = require("./util/global");
 exports.config = global_1.default;
-const config_json_1 = require("./config.json");
-exports.bot = new discord_js_1.Client({ intents: 49151 }); //use 48893 if no privileged intents (GUILD_PRESENCES and GUILD_MEMBERS)
+exports.bot = new discord_js_1.Client({
+    intents: 49151,
+    partials: ["CHANNEL"],
+}); //use 48893 if no privileged intents (GUILD_PRESENCES and GUILD_MEMBERS)
 var ArgumentType;
 (function (ArgumentType) {
     ArgumentType[ArgumentType["Number"] = 0] = "Number";
@@ -56,16 +58,16 @@ function testArgument(argType, value) {
         case ArgumentType.String:
             return true;
         case ArgumentType.MemberMention:
-            return (value.slice(0, 2) == '<@' &&
-                value[20] == '>' &&
+            return (value.slice(0, 2) == "<@" &&
+                value[20] == ">" &&
                 !isNaN(+value.slice(2, 20)));
         case ArgumentType.ChannelMention:
-            return (value.slice(0, 2) == '<#' &&
-                value[20] == '>' &&
+            return (value.slice(0, 2) == "<#" &&
+                value[20] == ">" &&
                 !isNaN(+value.slice(2, 20)));
         case ArgumentType.RoleMention:
-            return (value.slice(0, 3) == '<@&' &&
-                value[21] == '>' &&
+            return (value.slice(0, 3) == "<@&" &&
+                value[21] == ">" &&
                 !isNaN(+value.slice(3, 21)));
         case ArgumentType.ID:
             return value.length == 18 && !isNaN(+value);
@@ -74,7 +76,7 @@ function testArgument(argType, value) {
 exports.testArgument = testArgument;
 class Command {
     constructor(opt) {
-        this.admin = false;
+        this.permissionTest = () => true;
         this.type = CommandType.All;
         this.cd = 0;
         this.aliases = [];
@@ -106,8 +108,7 @@ exports.commands = new discord_js_1.Collection();
     });
 });
 exports.bot.login(global_1.default.TOKEN);
-process.on('uncaughtException', function (err) {
-    if (config_json_1.DEBUG)
-        console.log('Caught exception: ' + err);
+process.on("uncaughtException", function (err) {
+    console.error("Caught exception: " + err);
 });
 //# sourceMappingURL=index.js.map

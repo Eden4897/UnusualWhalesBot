@@ -1,9 +1,12 @@
-import { Client, Collection, Message, MessageEmbed } from 'discord.js';
-import { readdir } from 'fs';
-import config from './util/global';
-import { DEBUG } from './config.json';
+import { Client, Collection, GuildMember, Message, User } from "discord.js";
+import { readdir } from "fs";
+import { JSONMap } from "./util/file";
+import config from "./util/global";
 
-export const bot: Client = new Client({ intents: 49151 }); //use 48893 if no privileged intents (GUILD_PRESENCES and GUILD_MEMBERS)
+export const bot: Client = new Client({
+  intents: 49151,
+  partials: ["CHANNEL"],
+}); //use 48893 if no privileged intents (GUILD_PRESENCES and GUILD_MEMBERS)
 
 export { config };
 
@@ -23,13 +26,13 @@ export enum ArgumentType {
   MemberMention,
   ChannelMention,
   RoleMention,
-  ID
+  ID,
 }
 
 export enum CommandType {
   All,
   DM,
-  Guild
+  Guild,
 }
 
 export function testArgument(argType: ArgumentType, value: string): boolean {
@@ -58,20 +61,20 @@ export function testArgument(argType: ArgumentType, value: string): boolean {
       return true;
     case ArgumentType.MemberMention:
       return (
-        value.slice(0, 2) == '<@' &&
-        value[20] == '>' &&
+        value.slice(0, 2) == "<@" &&
+        value[20] == ">" &&
         !isNaN(+value.slice(2, 20))
       );
     case ArgumentType.ChannelMention:
       return (
-        value.slice(0, 2) == '<#' &&
-        value[20] == '>' &&
+        value.slice(0, 2) == "<#" &&
+        value[20] == ">" &&
         !isNaN(+value.slice(2, 20))
       );
     case ArgumentType.RoleMention:
       return (
-        value.slice(0, 3) == '<@&' &&
-        value[21] == '>' &&
+        value.slice(0, 3) == "<@&" &&
+        value[21] == ">" &&
         !isNaN(+value.slice(3, 21))
       );
     case ArgumentType.ID:
@@ -81,19 +84,16 @@ export function testArgument(argType: ArgumentType, value: string): boolean {
 
 export class Command {
   name: string;
-  description: string;
-  usage: string;
-  example: string;
-  admin?: boolean = false;
+  permissionTest?: (member: GuildMember | User) => boolean = () => true;
   type?: CommandType = CommandType.All;
   cd?: number = 0;
   aliases?: Array<string> = [];
+  guildDependentAliases?: JSONMap;
   args?: Array<ArgumentType | Array<ArgumentType>> = [];
   execute: (
     bot: Client,
     msg: Message,
     args: Array<string>,
-    help: MessageEmbed,
     cdReset: () => any
   ) => any;
   constructor(opt: Command) {
@@ -127,6 +127,6 @@ readdir(`${__dirname}\\events/`, (err, files) => {
 
 bot.login(config.TOKEN);
 
-process.on('uncaughtException', function (err) {
-  if (DEBUG) console.log('Caught exception: ' + err);
+process.on("uncaughtException", function (err) {
+  console.error("Caught exception: " + err);
 });
