@@ -1,1 +1,0 @@
-{"version":3,"file":"guildDelete.js","sourceRoot":"","sources":["../../src/events/guildDelete.ts"],"names":[],"mappings":";;AACA,kEAA4D;AAE5D,kBAAe,KAAK,EAAE,GAAW,EAAE,KAAY,EAAE,EAAE;IACjD,0BAAU,CAAC,MAAM,CAAC,CAAC,CAAC,EAAE,EAAE,CAAC,CAAC,CAAC,EAAE,IAAI,KAAK,CAAC,EAAE,CAAC,CAAC;AAC7C,CAAC,CAAC"}

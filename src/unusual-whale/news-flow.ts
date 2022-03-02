@@ -7,7 +7,6 @@ import { DEBUG } from "../config.json";
 interface NewsFlowInfo {
   Date: string;
   Headline: string;
-  Tickers: string;
 }
 
 export async function watchNewsFlow(
@@ -35,7 +34,6 @@ async function observeNewNewsFlow(page: puppeteer.Page) {
       const info: NewsFlowInfo = {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
         Headline: topItem.querySelector("td:nth-child(2)").textContent,
-        Tickers: topItem.querySelector("td:nth-child(3)").textContent,
       };
       newNewsFlowResponse(info);
     });
@@ -67,7 +65,7 @@ async function newNewsFlowResponse(info: NewsFlowInfo) {
           return { name: entry[0], value: entry[1] ? entry[1] : "n/a" };
         })
       )
-      .setFooter({ text: guildInfo.footer });
+      .setFooter({ text: guildInfo.footer ?? "" });
 
     const guild = await bot.guilds.fetch(guildInfo.id);
     const channel: TextChannel = (await guild.channels.fetch(

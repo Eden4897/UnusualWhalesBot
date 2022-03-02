@@ -1,11 +1,8 @@
 import { Client, Message, MessageEmbed } from "discord.js";
 import { Command } from "..";
-import { JSONMap } from "../util/file";
-export const pingAliasesFile = new JSONMap("ping-aliases.json");
 
 export default new Command({
   name: `ping`,
-  guildDependentAliases: pingAliasesFile,
   async execute(bot: Client, msg: Message, args: Array<string>) {
     const pinging: Message = await msg.channel.send(`🏓 Pinging...`);
 

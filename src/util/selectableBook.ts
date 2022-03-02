@@ -30,15 +30,20 @@ export class SelectableBook<T> extends Book {
       const _ = new MessageEmbed().setTitle(this.title).addFields(
         this.pages[this.currentPageIndex].map(
           ({ name, description }, index) => {
+            description =
+              description.length > 200
+                ? description.substring(0, 200) + "\n..."
+                : description;
+            description =
+              this.cursorIndex == index
+                ? description
+                    .split("\n")
+                    .map((line) => "> " + line)
+                    .join("\n")
+                : description;
             return {
               name: this.cursorIndex == index ? `> ${name}` : name,
-              value:
-                this.cursorIndex == index
-                  ? description
-                      .split("\n")
-                      .map((line) => "> " + line)
-                      .join("\n")
-                  : description,
+              value: description,
             };
           }
         )

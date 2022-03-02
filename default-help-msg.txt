@@ -1,0 +1,12 @@
+__Commands__
+**.ia (tikr)** -  Intraday Analyst Command: Custom search for the most significant Option trades with option chain information for searched stock. 
+**.hc (page)** - Hot Chains and Tickers Command: Find the ratio of Call/Put Option Volume & Most Active option chains for a majority of stocks.
+**.hch (page)** - Hot Chains and Tickers (Hidden INDEX/ETF) Command: Same as other command with the exception of removing INDEX/ETF stocks.
+**.tf** - Ticker Flows Command: Ticker Flows Command: Find a large variety of information for numerous stocks.
+**.ce (tikr)** - Chain Explorer Command: Custom Search to find  Intraday & historical volume with open interest on searched stock.
+**.sf** - Sector Flow Command: Information on how multiple market sectors are doing.
+**.oie** - Open Interest Explorer Command: Open Intrest on multiple stocks 
+**.od** - Options Dashboard Command: Information on a variety of Option chains, consisting of most bullish, most bearish chains,  top unusual chains, most active weeklies, and much more. 
+**.odh** - Options Dashboard (Hidden INDEX/ETF) Command: Same as other command with the exception of removing INDEX/ETF stocks.
+**.oc (tikr**) - Options Charting Command: Chart pages that provide a breakdown for Strikes/Total premium of Call/Puts on certain dates
+**.hi (tikr)** - Historical Flows Command: Custom Search for Historical call/put ratio of volume for the searched stock.

@@ -1,8 +1,8 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, MessageEmbed } from "discord.js";
 import { ArgumentType, Command } from "..";
-import { pages } from "../unusual-whale/unusual-whale";
+import { guildsFile, pages } from "../unusual-whale/unusual-whale";
 import { JSONMap } from "../util/file";
-const hchAliasesFile = new JSONMap("JSONs/hch-aliases.json");
+export const hchAliasesFile = new JSONMap("JSONs/hch-aliases.json");
 
 let occupied: boolean = false;
 let currentPage: number = 1;
@@ -10,7 +10,7 @@ let currentPage: number = 1;
 export default new Command({
   name: `hch`,
   guildDependentAliases: hchAliasesFile,
-  args: [ArgumentType.Number],
+  argTypes: [ArgumentType.Number],
   async execute(bot: Client, msg: Message, args: Array<string>) {
     if (occupied) {
       return msg.channel.send(
@@ -18,6 +18,8 @@ export default new Command({
       );
     }
     occupied = true;
+    const waitMsg = await msg.channel.send("Processing...");
+
     const toFlip = parseInt(args[0]) - currentPage;
     if (toFlip < 0) {
       for (let i = 0; i < Math.abs(toFlip); i++) {
@@ -51,7 +53,7 @@ export default new Command({
     });
 
     await pages.hotChainsNTickersHidden.screenshot({
-      path: "hot-chains-and-tickers.png",
+      path: "hot-chains-and-tickers-hidden.png",
       clip: {
         x: 530,
         y: 574,
@@ -59,8 +61,16 @@ export default new Command({
         height: 2700,
       },
     });
+    await waitMsg.delete();
     await msg.reply({
-      files: ["hot-chains-and-tickers.png"],
+      embeds: [
+        new MessageEmbed()
+          .setImage("attachment://hot-chains-and-tickers-hidden.png")
+          .setFooter({
+            text: guildsFile.find((g) => g.id == msg.guild?.id)?.footer ?? "",
+          }),
+      ],
+      files: ["hot-chains-and-tickers-hidden.png"],
     });
     occupied = false;
   },

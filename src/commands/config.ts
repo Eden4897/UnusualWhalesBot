@@ -1,11 +1,22 @@
 import { Client, Message, TextChannel } from "discord.js";
+import { readFileSync } from "fs";
 import { Command } from "..";
 import { guildsFile, GuildsFileType } from "../unusual-whale/unusual-whale";
 import { PageEntry } from "../util/book";
 import { JSONMap } from "../util/file";
 import { resolveChannel } from "../util/resolve";
 import { SelectableBook, SelectionButton } from "../util/selectableBook";
-import { pingAliasesFile } from "./ping";
+import { ceAliasesFile } from "./ce";
+import { hcAliasesFile } from "./hc";
+import { hchAliasesFile } from "./hch";
+import { hiAliasesFile } from "./hi";
+import { iaAliasesFile } from "./ia";
+import { ocAliasesFile } from "./oc";
+import { odAliasesFile } from "./od";
+import { odhAliasesFile } from "./odh";
+import { oieAliasesFile } from "./oie";
+import { sfAliasesFile } from "./sf";
+import { tfAliasesFile } from "./tf";
 
 export enum ServerConfigType {
   channel,
@@ -104,6 +115,26 @@ export default new Command({
           },
         },
         {
+          name: "Help Embed Title",
+          description: guildData.helpEmbedTitle ?? "Command List",
+          rawEntryData: {
+            name: "help embed title",
+            propertyName: "helpEmbedTitle",
+            type: ServerConfigType.text,
+          },
+        },
+        {
+          name: "Help Embed Description",
+          description:
+            guildData.helpEmbedDesc ??
+            readFileSync("default-help-msg.txt").toString(),
+          rawEntryData: {
+            name: "help embed description",
+            propertyName: "helpEmbedDesc",
+            type: ServerConfigType.text,
+          },
+        },
+        {
           name: "Footer",
           description: guildData.footer ?? "Unassigned",
           rawEntryData: {
@@ -113,12 +144,102 @@ export default new Command({
           },
         },
         {
-          name: "Ping Command",
-          description: pingAliasesFile.get(guildData.id) ?? "ping",
+          name: "Intraday Analyst Command",
+          description: iaAliasesFile.get(guildData.id) ?? "ia",
           rawEntryData: {
-            name: "ping",
+            name: "ia",
             type: ServerConfigType.commandName,
-            aliasFile: pingAliasesFile,
+            aliasFile: iaAliasesFile,
+          },
+        },
+        {
+          name: "Hot Chains and Tickers Command",
+          description: hcAliasesFile.get(guildData.id) ?? "hc",
+          rawEntryData: {
+            name: "hc",
+            type: ServerConfigType.commandName,
+            aliasFile: hcAliasesFile,
+          },
+        },
+        {
+          name: "Hot Chains and Tickers (Hidden INDEX/ETF) Command",
+          description: hchAliasesFile.get(guildData.id) ?? "hch",
+          rawEntryData: {
+            name: "hch",
+            type: ServerConfigType.commandName,
+            aliasFile: hchAliasesFile,
+          },
+        },
+        {
+          name: "Ticker Flow Command",
+          description: tfAliasesFile.get(guildData.id) ?? "tf",
+          rawEntryData: {
+            name: "tf",
+            type: ServerConfigType.commandName,
+            aliasFile: tfAliasesFile,
+          },
+        },
+        {
+          name: "Chain Explorer Command",
+          description: ceAliasesFile.get(guildData.id) ?? "ce",
+          rawEntryData: {
+            name: "ce",
+            type: ServerConfigType.commandName,
+            aliasFile: ceAliasesFile,
+          },
+        },
+        {
+          name: "Sector Flow Command",
+          description: sfAliasesFile.get(guildData.id) ?? "sf",
+          rawEntryData: {
+            name: "sf",
+            type: ServerConfigType.commandName,
+            aliasFile: sfAliasesFile,
+          },
+        },
+        {
+          name: "Open Intrest Explorer Command",
+          description: oieAliasesFile.get(guildData.id) ?? "oie",
+          rawEntryData: {
+            name: "oie",
+            type: ServerConfigType.commandName,
+            aliasFile: oieAliasesFile,
+          },
+        },
+        {
+          name: "Options Dashboard Command",
+          description: odAliasesFile.get(guildData.id) ?? "od",
+          rawEntryData: {
+            name: "od",
+            type: ServerConfigType.commandName,
+            aliasFile: odAliasesFile,
+          },
+        },
+        {
+          name: "Options Dashboard (Hidden INDEX/ETF) Command",
+          description: odhAliasesFile.get(guildData.id) ?? "odh",
+          rawEntryData: {
+            name: "odh",
+            type: ServerConfigType.commandName,
+            aliasFile: odhAliasesFile,
+          },
+        },
+        {
+          name: "Options Charting Command",
+          description: ocAliasesFile.get(guildData.id) ?? "oc",
+          rawEntryData: {
+            name: "oc",
+            type: ServerConfigType.commandName,
+            aliasFile: ocAliasesFile,
+          },
+        },
+        {
+          name: "Historical Flow Command",
+          description: hiAliasesFile.get(guildData.id) ?? "hi",
+          rawEntryData: {
+            name: "hi",
+            type: ServerConfigType.commandName,
+            aliasFile: hiAliasesFile,
           },
         },
       ];
@@ -176,14 +297,31 @@ export default new Command({
             }
           } else if (rawEntryData.type == ServerConfigType.text) {
             try {
+              const charLimit =
+                rawEntryData.propertyName == "helpEmbedTitle"
+                  ? 256
+                  : rawEntryData.propertyName == "helpEmbedDesc"
+                  ? 4096
+                  : 2048;
               await msg.author
                 .send(
                   `Please enter the text that you would like to be used as the ${rawEntryData.name}.`
                 )
                 .then((m) => setTimeout(() => m.delete(), 30000));
+
+              const filter = (msg: Message): boolean => {
+                if (msg.author.bot) return false;
+                if (msg.content.length >= charLimit) {
+                  msg.channel.send(
+                    `Too many characters! The character limit for the ${rawEntryData.name} is ${charLimit} characters.`
+                  );
+                  return false;
+                }
+                return true;
+              };
               const [[, { content: response }]] =
                 await msg.author.dmChannel.awaitMessages({
-                  filter: (msg) => !msg.author.bot,
+                  filter,
                   time: 30000,
                   errors: ["time"],
                   max: 1,
@@ -230,7 +368,7 @@ export default new Command({
                 });
               rawEntryData.aliasFile.set(accessedGuild.id, response);
               await msg.author.send(
-                `Alias for the \`${rawEntryData.name}\` command has been set to \`${response}\`.`
+                `Alias for the \`${rawEntryData.name}\` command has been set to \`${response}\`. Don't forget to change your help command to suit this new command!`
               );
             } catch (_) {
               await msg.author
@@ -265,7 +403,7 @@ export default new Command({
       pageEntriesGenerator,
       msg,
       `Configuration of the ${accessedGuild.name} server`,
-      10,
+      6,
       ["\n", buttons.edit, buttons.erase]
     ).send(msg.author);
   },

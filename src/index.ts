@@ -1,5 +1,6 @@
 import { Client, Collection, GuildMember, Message, User } from "discord.js";
 import { readdir } from "fs";
+import getPixels = require("get-pixels");
 import { JSONMap } from "./util/file";
 import config from "./util/global";
 
@@ -35,20 +36,23 @@ export enum CommandType {
   Guild,
 }
 
-export function testArgument(argType: ArgumentType, value: string): boolean {
+export function testIfArgumentValid(
+  argType: ArgumentType,
+  value: string
+): boolean {
   switch (argType) {
     case ArgumentType.Number:
-      return isNaN(+value);
+      return !isNaN(+value);
     case ArgumentType.PositiveNumber:
-      return isNaN(+value) && +value >= 0;
+      return !isNaN(+value) && +value >= 0;
     case ArgumentType.NonZeroPositiveNumber:
-      return isNaN(+value) && +value > 0;
+      return !isNaN(+value) && +value > 0;
     case ArgumentType.Integer:
-      return isNaN(+value) && !value.includes(`.`);
+      return !isNaN(+value) && !value.includes(`.`);
     case ArgumentType.PositiveInteger:
-      return isNaN(+value) && !value.includes(`.`) && +value >= 0;
+      return !isNaN(+value) && !value.includes(`.`) && +value >= 0;
     case ArgumentType.NonZeroPositiveInteger:
-      return isNaN(+value) && !value.includes(`.`) && +value > 0;
+      return !isNaN(+value) && !value.includes(`.`) && +value > 0;
     case ArgumentType.Alphanumeric:
       return !/[^\w ]/.test(value);
     case ArgumentType.Alphabetic:
@@ -58,7 +62,7 @@ export function testArgument(argType: ArgumentType, value: string): boolean {
     case ArgumentType.Uppercase:
       return !/[^A-Z]/.test(value);
     case ArgumentType.String:
-      return true;
+      return !!value;
     case ArgumentType.MemberMention:
       return (
         value.slice(0, 2) == "<@" &&
@@ -89,7 +93,7 @@ export class Command {
   cd?: number = 0;
   aliases?: Array<string> = [];
   guildDependentAliases?: JSONMap;
-  args?: Array<ArgumentType | Array<ArgumentType>> = [];
+  argTypes?: Array<ArgumentType | Array<ArgumentType>> = [];
   execute: (
     bot: Client,
     msg: Message,
@@ -128,5 +132,11 @@ readdir(`${__dirname}\\events/`, (err, files) => {
 bot.login(config.TOKEN);
 
 process.on("uncaughtException", function (err) {
+  if (
+    err
+      .toString()
+      .startsWith("Error: Execution context is not available in detached frame")
+  )
+    return;
   console.error("Caught exception: " + err);
 });

@@ -1,14 +1,14 @@
-import { Client, Message, MessageAttachment, MessageEmbed } from "discord.js";
+import { Client, Message, MessageEmbed } from "discord.js";
 import { ArgumentType, Command } from "..";
 import { guildsFile, pages } from "../unusual-whale/unusual-whale";
 import { JSONMap } from "../util/file";
-export const iaAliasesFile = new JSONMap("JSONs/ia-aliases.json");
+export const hiAliasesFile = new JSONMap("JSONs/hi-aliases.json");
 
 let occupied: boolean = false;
 
 export default new Command({
-  name: `ia`,
-  guildDependentAliases: iaAliasesFile,
+  name: `hi`,
+  guildDependentAliases: hiAliasesFile,
   argTypes: [ArgumentType.String],
   async execute(bot: Client, msg: Message, args: Array<string>) {
     if (occupied) {
@@ -16,28 +16,32 @@ export default new Command({
         "Sorry, this command is currently occupied. Please try again a few seconds later after the previous request is complete."
       );
     }
+
     occupied = true;
+
     const waitMsg = await msg.channel.send("Processing...");
 
-    await pages.intradayAnalyst.goto(
-      `https://www.unusualwhales.com/flow/ticker/overview?symbol=${args[0]}`
+    await pages.historicalFlow.goto(
+      `https://www.unusualwhales.com/flow/ticker_flows/${args[0]}`
     );
-    await new Promise((r) => setTimeout(r, 10000));
-    await pages.intradayAnalyst.screenshot({
-      path: "intraday-analyst.png",
-      clip: { width: 1890, height: 1080, x: 460, y: 744 },
+
+    await new Promise((res) => setTimeout(res, 20000));
+
+    await pages.historicalFlow.screenshot({
+      path: "hi.png",
+      clip: { x: 468, y: 614, width: 1874, height: 1304 },
     });
     await waitMsg.delete();
     await msg.reply({
       embeds: [
         new MessageEmbed()
           .setTitle(args[0])
-          .setImage("attachment://intraday-analyst.png")
+          .setImage("attachment://hi.png")
           .setFooter({
             text: guildsFile.find((g) => g.id == msg.guild?.id)?.footer ?? "",
           }),
       ],
-      files: ["intraday-analyst.png"],
+      files: ["hi.png"],
     });
     occupied = false;
   },

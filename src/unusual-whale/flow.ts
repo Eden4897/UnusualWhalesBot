@@ -104,7 +104,7 @@ async function newFlowResponse(info: FlowInfo) {
           };
         })
       )
-      .setFooter({ text: guildInfo.footer });
+      .setFooter({ text: guildInfo.footer ?? "" });
 
     const guild = await bot.guilds.fetch(guildInfo.id);
     const channel: TextChannel = (await guild.channels.fetch(

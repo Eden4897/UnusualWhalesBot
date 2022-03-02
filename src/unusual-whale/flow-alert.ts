@@ -42,7 +42,9 @@ async function observeNewFlowAlert(page: puppeteer.Page) {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
         Ticker: topItem.querySelector("td:nth-child(2)").textContent,
         "\u200b": "\u200b",
-        Desc: topItem.querySelector("td:nth-child(4)").textContent,
+        Desc: topItem
+          .querySelector("td:nth-child(4)")
+          .textContent.replace(/[^A-Za-z0-9/$. ]/g, ""),
         Timespan: topItem.querySelector("td:nth-child(5)").textContent,
         Size: topItem.querySelector("td:nth-child(6)").textContent,
         "Amount Of Trades":
@@ -83,7 +85,7 @@ async function newFlowAlertResponse(info: FlowAlertInfo) {
           };
         })
       )
-      .setFooter({ text: guildInfo.footer });
+      .setFooter({ text: guildInfo.footer ?? "" });
 
     const guild = await bot.guilds.fetch(guildInfo.id);
     const channel: TextChannel = (await guild.channels.fetch(

@@ -1,8 +1,8 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, MessageEmbed } from "discord.js";
 import { ArgumentType, Command } from "..";
-import { pages } from "../unusual-whale/unusual-whale";
+import { guildsFile, pages } from "../unusual-whale/unusual-whale";
 import { JSONMap } from "../util/file";
-const hcAliasesFile = new JSONMap("JSONs/hc-aliases.json");
+export const hcAliasesFile = new JSONMap("JSONs/hc-aliases.json");
 
 let occupied: boolean = false;
 let currentPage: number = 1;
@@ -10,7 +10,7 @@ let currentPage: number = 1;
 export default new Command({
   name: `hc`,
   guildDependentAliases: hcAliasesFile,
-  args: [ArgumentType.Number],
+  argTypes: [ArgumentType.Number],
   async execute(bot: Client, msg: Message, args: Array<string>) {
     if (occupied) {
       return msg.channel.send(
@@ -18,6 +18,8 @@ export default new Command({
       );
     }
     occupied = true;
+    const waitMsg = await msg.channel.send("Processing...");
+
     const toFlip = parseInt(args[0]) - currentPage;
     if (toFlip < 0) {
       for (let i = 0; i < Math.abs(toFlip); i++) {
@@ -57,7 +59,15 @@ export default new Command({
         height: 2700,
       },
     });
+    await waitMsg.delete();
     await msg.reply({
+      embeds: [
+        new MessageEmbed()
+          .setImage("attachment://hot-chains-and-tickers.png")
+          .setFooter({
+            text: guildsFile.find((g) => g.id == msg.guild?.id)?.footer ?? "",
+          }),
+      ],
       files: ["hot-chains-and-tickers.png"],
     });
     occupied = false;

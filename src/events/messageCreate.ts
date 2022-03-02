@@ -3,7 +3,7 @@ import {
   ArgumentType,
   Command,
   commands,
-  testArgument,
+  testIfArgumentValid,
   config,
   CommandType,
 } from "..";
@@ -14,7 +14,7 @@ let recentCommands: Array<string> = [];
 export default async (bot: Client, msg: Message) => {
   if (msg.author.bot) return;
 
-  let args: Array<string> = msg.content
+  let phrases: Array<string> = msg.content
     .substring(config.PREFIX.length)
     .match(/\\?.|^$/g)
     .reduce(
@@ -31,6 +31,9 @@ export default async (bot: Client, msg: Message) => {
       { a: [""] }
     ).a;
 
+  let commandName = phrases[0];
+  let args = phrases.splice(1);
+
   let content: string = msg.content.substring(0);
 
   if (content.substring(0, config.PREFIX.length) == config.PREFIX) {
@@ -41,7 +44,7 @@ export default async (bot: Client, msg: Message) => {
           cmd.guildDependentAliases?.get(
             msg.guild?.id ??
               guildsFile.find((g) => g.owner == msg.author.id)?.id
-          ) == args[0]
+          ) == commandName
       )
     ) {
       command = commands.find(
@@ -49,12 +52,12 @@ export default async (bot: Client, msg: Message) => {
           cmd.guildDependentAliases?.get(
             msg.guild?.id ??
               guildsFile.find((g) => g.owner == msg.author.id)?.id
-          ) == args[0]
+          ) == commandName
       );
     } else {
       command =
-        commands.get(args[0]) ??
-        commands.find((cmd) => cmd.aliases.includes(args[0]));
+        commands.get(commandName) ??
+        commands.find((cmd) => cmd.aliases.includes(commandName));
     }
     if (command) {
       try {
@@ -64,7 +67,7 @@ export default async (bot: Client, msg: Message) => {
         if (command.type == CommandType.Guild && !msg.guild) {
           return msg.channel.send("This command can only be used in a guild!");
         }
-        if (recentCommands.includes(`${msg.author.id}-${args[0]}`)) {
+        if (recentCommands.includes(`${msg.author.id}-${commandName}`)) {
           return msg.channel.send(
             "Please wait a while before using this command again."
           );
@@ -74,12 +77,14 @@ export default async (bot: Client, msg: Message) => {
         }
 
         if (
-          command.args.splice(1).some((argTypes, index) => {
-            if (!Array.isArray(argTypes)) {
-              argTypes = [argTypes as unknown as ArgumentType];
+          command.argTypes &&
+          command.argTypes.some((argTypesArr, index) => {
+            if (!Array.isArray(argTypesArr)) {
+              argTypesArr = [argTypesArr as unknown as ArgumentType];
             }
-            return (argTypes as Array<ArgumentType>).some((argType) =>
-              testArgument(argType, args[index])
+            return !(argTypesArr as Array<ArgumentType>).every(
+              (possibleArgTypes) =>
+                testIfArgumentValid(possibleArgTypes, args[index])
             );
           })
         ) {
@@ -87,24 +92,24 @@ export default async (bot: Client, msg: Message) => {
             "Wrong command format; please use the help command."
           );
         }
-        recentCommands.push(`${msg.author.id}-${args[0]}`);
+        recentCommands.push(`${msg.author.id}-${commandName}`);
 
         setTimeout(() => {
           recentCommands = recentCommands.filter(
-            (r) => r != `${msg.author.id}-${args[0]}`
+            (r) => r != `${msg.author.id}-${commandName}`
           );
         }, command.cd);
 
-        await command.execute(bot, msg, args.slice(1), () => {
+        await command.execute(bot, msg, args, () => {
           recentCommands = recentCommands.filter(
-            (r) => r != `${msg.author.id}-${args[0]}`
+            (r) => r != `${msg.author.id}-${commandName}`
           );
         });
       } catch (err) {
         console.error(err);
         msg.channel
           .send(
-            `There was an error trying to execute the ${args[0]} command! Please contact the admins.`
+            `There was an error trying to execute the ${commandName} command! Please contact the admins.`
           )
           .catch(() => {});
       }

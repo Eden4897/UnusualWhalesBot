@@ -28,7 +28,13 @@ export class Book {
       .setTitle(this.title)
       .addFields(
         this.pages[this.currentPageIndex].map(({ name, description }) => {
-          return { name, value: description };
+          return {
+            name,
+            value:
+              description.length > 1000
+                ? description.substring(0, 1000) + "..."
+                : description,
+          };
         })
       )
       .setFooter({
@@ -83,7 +89,6 @@ export class Book {
   }
 
   async send(channel: TextChannel | DMChannel | User): Promise<void> {
-    this.createEmbed();
     const bookMsg = await channel.send({ embeds: [this.createEmbed()] });
 
     attachCallbackButtons(this.activator, bookMsg, this.buttons);
