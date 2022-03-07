@@ -72,7 +72,7 @@ async function observeNewFlow(page: puppeteer.Page) {
       document.querySelector(
         "#flow-trades > div.os-padding > div > div > table > tbody"
       ),
-      { childList: true }
+      { childList: true, subtree: true }
     );
   });
 

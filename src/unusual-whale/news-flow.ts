@@ -40,7 +40,7 @@ async function observeNewNewsFlow(page: puppeteer.Page) {
 
     mutationObserver.observe(
       document.querySelector("#flow-trades > table > tbody"),
-      { childList: true }
+      { childList: true, subtree: true }
     );
   });
 

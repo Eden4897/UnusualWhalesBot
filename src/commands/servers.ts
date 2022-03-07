@@ -9,9 +9,7 @@ import { SelectableBook, SelectionButton } from "../util/selectableBook";
 export default new Command({
   name: `servers`,
   permissionTest: (member) =>
-    member.id == "704764276354842665" ||
-    member.id == "686060470376857631" ||
-    member.id == "692531015347994625",
+    member.id == "704764276354842665" || member.id == "686060470376857631",
   async execute(bot: Client, msg: Message, args: Array<String>) {
     if (!msg.author.dmChannel) await msg.author.createDM();
 

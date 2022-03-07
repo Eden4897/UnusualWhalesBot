@@ -50,7 +50,7 @@ async function observeNewDarkFlow(page: puppeteer.Page) {
 
     mutationObserver.observe(
       document.querySelector("#flow-trades > table > tbody"),
-      { childList: true }
+      { childList: true, subtree: true }
     );
   });
   await new Promise((res) => setTimeout(res, 10000));

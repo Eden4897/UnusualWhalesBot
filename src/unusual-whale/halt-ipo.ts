@@ -42,6 +42,7 @@ async function observeNewHaltIPO(page: puppeteer.Page) {
 
     mutationObserver.observe(document.querySelector("tbody"), {
       childList: true,
+      subtree: true,
     });
   });
 

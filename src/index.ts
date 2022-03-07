@@ -1,6 +1,5 @@
 import { Client, Collection, GuildMember, Message, User } from "discord.js";
 import { readdir } from "fs";
-import getPixels = require("get-pixels");
 import { JSONMap } from "./util/file";
 import config from "./util/global";
 
