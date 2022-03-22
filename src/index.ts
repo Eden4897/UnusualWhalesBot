@@ -4,7 +4,7 @@ import { JSONMap } from "./util/file";
 import config from "./util/global";
 
 export const bot: Client = new Client({
-  intents: ["GUILD_MESSAGES", "DIRECT_MESSAGES"],
+  intents: ["GUILD_MESSAGES", "DIRECT_MESSAGES", "GUILDS"],
   partials: ["CHANNEL"],
 });
 
