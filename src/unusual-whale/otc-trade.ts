@@ -73,7 +73,10 @@ async function newOTCTradeResponse(info: OTCTradeInfo) {
           };
         })
       )
-      .setFooter({ text: guildInfo.footer ?? "" });
+      .setFooter({
+        iconURL: guildsFile.find((g) => g.id == guildInfo.id)?.footerIcon,
+        text: guildInfo.footer ?? "",
+      });
 
     const guild = await bot.guilds.fetch(guildInfo.id);
     const channel: TextChannel = (await guild.channels.fetch(

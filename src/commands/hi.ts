@@ -38,6 +38,7 @@ export default new Command({
           .setTitle(args[0])
           .setImage("attachment://hi.png")
           .setFooter({
+            iconURL: guildsFile.find((g) => g.id == msg.guild?.id)?.footerIcon,
             text: guildsFile.find((g) => g.id == msg.guild?.id)?.footer ?? "",
           }),
       ],

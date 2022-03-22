@@ -27,6 +27,7 @@ export default new Command({
     await msg.reply({
       embeds: [
         new MessageEmbed().setImage("attachment://odh.png").setFooter({
+          iconURL: guildsFile.find((g) => g.id == msg.guild?.id)?.footerIcon,
           text: guildsFile.find((g) => g.id == msg.guild?.id)?.footer ?? "",
         }),
       ],

@@ -61,7 +61,10 @@ async function newNewsFlowResponse(info: NewsFlowInfo) {
           return { name: entry[0], value: entry[1] ? entry[1] : "n/a" };
         })
       )
-      .setFooter({ text: guildInfo.footer ?? "" });
+      .setFooter({
+        iconURL: guildsFile.find((g) => g.id == guildInfo.id)?.footerIcon,
+        text: guildInfo.footer ?? "",
+      });
 
     const guild = await bot.guilds.fetch(guildInfo.id);
     const channel: TextChannel = (await guild.channels.fetch(

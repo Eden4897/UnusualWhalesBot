@@ -67,6 +67,7 @@ export default new Command({
         new MessageEmbed()
           .setImage("attachment://hot-chains-and-tickers-hidden.png")
           .setFooter({
+            iconURL: guildsFile.find((g) => g.id == msg.guild?.id)?.footerIcon,
             text: guildsFile.find((g) => g.id == msg.guild?.id)?.footer ?? "",
           }),
       ],
