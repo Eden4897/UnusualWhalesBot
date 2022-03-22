@@ -22,7 +22,7 @@ export default new Command({
           description: `**Status:** ${guild.enabled ? "Enabled" : "Disabled"}
 													**Owner:** ${
                             guild.owner
-                              ? bot.users.cache.get(guild.owner).tag
+                              ? bot.users.cache.get(guild.owner)?.tag
                               : "Unassigned"
                           }`,
           rawEntryData: guild,
