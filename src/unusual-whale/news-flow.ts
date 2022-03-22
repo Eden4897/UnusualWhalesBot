@@ -18,39 +18,35 @@ export async function watchNewsFlow(
   );
   await page.setViewport({ width: 2560, height: 1440 });
   await page.goto("https://www.unusualwhales.com/flow/news_flow");
-  await page.waitForSelector("#flow-trades > table > tbody");
-  page.exposeFunction("newNewsFlowResponse", newNewsFlowResponse);
 
-  await observeNewNewsFlow(page);
+  setImmediate(() => observeNewNewsFlow(page));
   return page;
 }
 
 async function observeNewNewsFlow(page: puppeteer.Page) {
-  await page.evaluate(async () => {
-    const mutationObserver = new MutationObserver(() => {
+  let previous = null;
+  while (1) {
+    await new Promise((res) => setTimeout(res, 10000));
+    await page.reload();
+    await page.waitForSelector("#flow-trades > table > tbody");
+    const newData: NewsFlowInfo = await page.evaluate(async () => {
       const topItem = document.querySelector(
         "#flow-trades > table > tbody > tr:nth-child(1)"
       );
-      const info: NewsFlowInfo = {
+      return {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
         Headline: topItem.querySelector("td:nth-child(2)").textContent,
       };
-      newNewsFlowResponse(info);
     });
-
-    mutationObserver.observe(
-      document.querySelector("#flow-trades > table > tbody"),
-      { childList: true, subtree: true }
-    );
-  });
-
-  await new Promise((res) => setTimeout(res, 10000));
-  if (DEBUG)
-    await page.evaluate(() =>
-      document
-        .querySelector("#flow-trades > table > tbody > tr:nth-child(1)")
-        .remove()
-    );
+    if (previous == null) {
+      if (DEBUG) newNewsFlowResponse(newData);
+      previous = JSON.stringify(newData);
+      continue;
+    } else if (previous != JSON.stringify(newData)) {
+      newNewsFlowResponse(newData);
+      previous = JSON.stringify(newData);
+    }
+  }
 }
 
 async function newNewsFlowResponse(info: NewsFlowInfo) {

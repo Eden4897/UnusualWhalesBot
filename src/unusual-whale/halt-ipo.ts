@@ -20,37 +20,35 @@ export async function watchHaltIPO(
   );
   await page.setViewport({ width: 2560, height: 1440 });
   await page.goto("https://www.unusualwhales.com/flow/market_events");
-  await page.waitForSelector("tbody");
-  page.exposeFunction("newHaltIPOResponse", newHaltIPOResponse);
 
-  await observeNewHaltIPO(page);
+  setImmediate(() => observeNewHaltIPO(page));
   return page;
 }
 
 async function observeNewHaltIPO(page: puppeteer.Page) {
-  await page.evaluate(async () => {
-    const mutationObserver = new MutationObserver(() => {
+  let previous = null;
+  while (1) {
+    await new Promise((res) => setTimeout(res, 10000));
+    await page.reload();
+    await page.waitForSelector("tbody");
+    const newData: HaltIPOInfo = await page.evaluate(() => {
       const topItem = document.querySelector("tbody > tr:nth-child(1)");
-      const info: HaltIPOInfo = {
+      return {
         Symbol: topItem.querySelector("td:nth-child(1)").textContent,
         State: topItem.querySelector("td:nth-child(2)").textContent,
         Reason: topItem.querySelector("td:nth-child(3)").textContent,
         Time: topItem.querySelector("td:nth-child(4)").textContent,
       };
-      newHaltIPOResponse(info);
     });
-
-    mutationObserver.observe(document.querySelector("tbody"), {
-      childList: true,
-      subtree: true,
-    });
-  });
-
-  await new Promise((res) => setTimeout(res, 10000));
-  if (DEBUG)
-    await page.evaluate(() =>
-      document.querySelector("tbody > tr:nth-child(1)").remove()
-    );
+    if (previous == null) {
+      if (DEBUG) newHaltIPOResponse(newData);
+      previous = JSON.stringify(newData);
+      continue;
+    } else if (previous != JSON.stringify(newData)) {
+      newHaltIPOResponse(newData);
+      previous = JSON.stringify(newData);
+    }
+  }
 }
 
 async function newHaltIPOResponse(info: HaltIPOInfo) {

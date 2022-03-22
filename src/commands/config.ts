@@ -1,4 +1,4 @@
-import { Client, Message, TextChannel } from "discord.js";
+import { Client, Message, MessageEmbed, TextChannel } from "discord.js";
 import { readFileSync } from "fs";
 import { Command } from "..";
 import { guildsFile, GuildsFileType } from "../unusual-whale/unusual-whale";
@@ -21,6 +21,7 @@ import { tfAliasesFile } from "./tf";
 export enum ServerConfigType {
   channel,
   text,
+  img,
   commandName,
 }
 
@@ -135,12 +136,21 @@ export default new Command({
           },
         },
         {
-          name: "Footer",
+          name: "Footer Text",
           description: guildData.footer ?? "Unassigned",
           rawEntryData: {
-            name: "footer",
+            name: "footer text",
             propertyName: "footer",
             type: ServerConfigType.text,
+          },
+        },
+        {
+          name: "Footer Icon",
+          description: guildData.footerIcon ?? "Unassigned",
+          rawEntryData: {
+            name: "footer icon",
+            propertyName: "footerIcon",
+            type: ServerConfigType.img,
           },
         },
         {
@@ -341,6 +351,52 @@ export default new Command({
                 )
                 .then((m) => setTimeout(() => m.delete(), 5000));
             }
+          } else if (rawEntryData.type == ServerConfigType.img) {
+            // verify if its an image
+            await msg.author
+              .send(
+                `Please enter the new image url for the \`${rawEntryData.name}\`. Please put your link within <>s.`
+              )
+              .then((m) => setTimeout(() => m.delete(), 30000));
+
+            const filter = async (msg: Message) => {
+              if (msg.author.bot) return false;
+              try {
+                await msg.author
+                  .send({
+                    embeds: [
+                      new MessageEmbed().setTitle("This is a test").setFooter({
+                        text: guildData.footer ?? "Test footer",
+                        iconURL: msg.content.substring(
+                          1,
+                          msg.content.length - 1
+                        ),
+                      }),
+                    ],
+                  })
+                  .then((m) => m.delete());
+              } catch {
+                msg.author.send("Invalid URL. Please try again.");
+                return false;
+              }
+              return true;
+            };
+            const [[, { content: response }]] =
+              await msg.author.dmChannel.awaitMessages({
+                filter: filter,
+                time: 30000,
+                errors: ["time"],
+                max: 1,
+              });
+
+            guildData.footerIcon = response.substring(1, response.length - 1);
+            guildsFile.writeAt(
+              guildsFile.findIndex((g) => g.id == accessedGuild.id),
+              guildData
+            );
+            await msg.author.send(
+              `Image for the ${rawEntryData.name} has been set.`
+            );
           } else if (rawEntryData.type == ServerConfigType.commandName) {
             try {
               await msg.author

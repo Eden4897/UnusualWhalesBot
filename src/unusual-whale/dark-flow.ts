@@ -23,7 +23,7 @@ export async function watchDarkFlow(
   );
   await page.setViewport({ width: 2560, height: 1440 });
   await page.goto("https://www.unusualwhales.com/flow/dark");
-  await page.waitForSelector("#flow-trades > table > tbody");
+  await page.waitForSelector("tbody");
   page.exposeFunction("newDarkFlowResponse", newDarkFlowResponse);
 
   await observeNewDarkFlow(page);
@@ -33,9 +33,7 @@ export async function watchDarkFlow(
 async function observeNewDarkFlow(page: puppeteer.Page) {
   await page.evaluate(async () => {
     const mutationObserver = new MutationObserver(() => {
-      const topItem = document.querySelector(
-        "#flow-trades > table > tbody > tr:nth-child(1)"
-      );
+      const topItem = document.querySelector("tbody > tr:nth-child(1)");
       const info: DarkFlowInfo = {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
         "Issue Type": topItem.querySelector("td:nth-child(2)").textContent,
@@ -48,17 +46,15 @@ async function observeNewDarkFlow(page: puppeteer.Page) {
       newDarkFlowResponse(info);
     });
 
-    mutationObserver.observe(
-      document.querySelector("#flow-trades > table > tbody"),
-      { childList: true, subtree: true }
-    );
+    mutationObserver.observe(document.querySelector("tbody"), {
+      childList: true,
+      subtree: true,
+    });
   });
   await new Promise((res) => setTimeout(res, 10000));
   if (DEBUG)
     await page.evaluate(() =>
-      document
-        .querySelector("#flow-trades > table > tbody > tr:nth-child(1)")
-        .remove()
+      document.querySelector("tbody > tr:nth-child(1)").remove()
     );
 }
 

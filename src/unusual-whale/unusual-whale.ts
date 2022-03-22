@@ -20,6 +20,7 @@ export type GuildsFileType = {
   OTCTradeChannel?: string;
   haltIPOChannel?: string;
   footer?: string;
+  footerIcon?: string;
   helpEmbedDesc?: string;
   helpEmbedTitle?: string;
 };

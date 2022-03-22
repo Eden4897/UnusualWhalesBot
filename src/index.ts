@@ -4,9 +4,9 @@ import { JSONMap } from "./util/file";
 import config from "./util/global";
 
 export const bot: Client = new Client({
-  intents: 49151,
+  intents: ["GUILD_MESSAGES", "DIRECT_MESSAGES"],
   partials: ["CHANNEL"],
-}); //use 48893 if no privileged intents (GUILD_PRESENCES and GUILD_MEMBERS)
+});
 
 export { config };
 
