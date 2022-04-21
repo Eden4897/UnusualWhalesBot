@@ -46,20 +46,20 @@ async function observeNewFlow(page: puppeteer.Page) {
       );
       const info: FlowInfo = {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
-        Ticker: topItem.querySelector("td:nth-child(2)").textContent,
-        Side: topItem.querySelector("td:nth-child(3)").textContent,
-        Strike: topItem.querySelector("td:nth-child(4)").textContent,
+        Ticker: topItem.querySelector("td:nth-child(3)").textContent,
+        Side: topItem.querySelector("td:nth-child(4)").textContent,
+        Strike: topItem.querySelector("td:nth-child(5)").textContent,
         Contract: topItem
-          .querySelector("td:nth-child(5)")
+          .querySelector("td:nth-child(6)")
           .textContent.toUpperCase(),
-        "Contract Date": topItem.querySelector("td:nth-child(6)").textContent,
-        DTE: topItem.querySelector("td:nth-child(7)").textContent,
-        Underlying: topItem.querySelector("td:nth-child(8)").textContent,
-        "Bid-Ask": topItem.querySelector("td:nth-child(9)").textContent,
-        Spot: topItem.querySelector("td:nth-child(10)").textContent,
-        Size: topItem.querySelector("td:nth-child(11)").textContent,
-        Premium: topItem.querySelector("td:nth-child(12)").textContent,
-        OI: topItem.querySelector("td:nth-child(13)").textContent,
+        "Contract Date": topItem.querySelector("td:nth-child(7)").textContent,
+        DTE: topItem.querySelector("td:nth-child(8)").textContent,
+        Underlying: topItem.querySelector("td:nth-child(9)").textContent,
+        "Bid-Ask": topItem.querySelector("td:nth-child(10)").textContent,
+        Spot: topItem.querySelector("td:nth-child(11)").textContent,
+        Size: topItem.querySelector("td:nth-child(12)").textContent,
+        Premium: topItem.querySelector("td:nth-child(13)").textContent,
+        OI: topItem.querySelector("td:nth-child(15)").textContent,
         Volume: topItem.querySelector("td:nth-child(14)").textContent,
         "\u200b": "\u200b",
       };

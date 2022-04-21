@@ -8,12 +8,16 @@ interface FlowAlertInfo {
   Date: string;
   Ticker: string;
   "\u200b": string;
-  Desc: string;
-  Timespan: string;
+  // Rule: string;
+  Strike: string;
+  Contract: string;
+  Expiry: string;
+  DTE: string;
+  "Stock Price": string;
+  Spot: string;
   Size: string;
-  "Amount Of Trades": string;
-  "Bid Premium": string;
-  "Ask Premium": string;
+  "Total Premium": string;
+  Volume: string;
 }
 
 export async function watchFlowAlert(
@@ -42,15 +46,18 @@ async function observeNewFlowAlert(page: puppeteer.Page) {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
         Ticker: topItem.querySelector("td:nth-child(2)").textContent,
         "\u200b": "\u200b",
-        Desc: topItem
-          .querySelector("td:nth-child(4)")
-          .textContent.replace(/[^A-Za-z0-9/$. ]/g, ""),
-        Timespan: topItem.querySelector("td:nth-child(5)").textContent,
-        Size: topItem.querySelector("td:nth-child(6)").textContent,
-        "Amount Of Trades":
-          topItem.querySelector("td:nth-child(7)").textContent,
-        "Bid Premium": topItem.querySelector("td:nth-child(8)").textContent,
-        "Ask Premium": topItem.querySelector("td:nth-child(9)").textContent,
+        // Rule: topItem
+        //   .querySelector("td:nth-child(3)")
+        //   .textContent.replace(/[^A-Za-z0-9/$. ]/g, ""),
+        Strike: topItem.querySelector("td:nth-child(4)").textContent,
+        Contract: topItem.querySelector("td:nth-child(5)").textContent,
+        Expiry: topItem.querySelector("td:nth-child(6)").textContent,
+        DTE: topItem.querySelector("td:nth-child(7)").textContent,
+        "Stock Price": topItem.querySelector("td:nth-child(8)").textContent,
+        Spot: topItem.querySelector("td:nth-child(9)").textContent,
+        Size: topItem.querySelector("td:nth-child(10)").textContent,
+        "Total Premium": topItem.querySelector("td:nth-child(12)").textContent,
+        Volume: topItem.querySelector("td:nth-child(13)").textContent,
       };
       newFlowAlertResponse(info);
     });
