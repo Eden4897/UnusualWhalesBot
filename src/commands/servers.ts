@@ -19,12 +19,11 @@ export default new Command({
           name: `${i + 1}. ${bot.guilds.cache.get(guild.id)?.name} (${
             guild.id
           })`,
-          description: `**Status:** ${guild.enabled ? "Enabled" : "Disabled"}
-													**Owner:** ${
-                            guild.owner
-                              ? bot.users.cache.get(guild.owner)?.tag
-                              : "Unassigned"
-                          }`,
+          description:
+            `**Status:** ${guild.enabled ? "Enabled" : "Disabled"}\n` +
+            `**Owner:** ${
+              guild.owner ? bot.users.cache.get(guild.owner)?.tag : "Unassigned"
+            }`,
           rawEntryData: guild,
         };
       });
@@ -49,7 +48,7 @@ export default new Command({
             const [[, message]] = await msg.author.dmChannel.awaitMessages({
               filter: async (msg) => {
                 if (msg.author.bot) return false;
-                if (!resolveMember(msg.content, guild)) {
+                if (!(await resolveMember(msg.content, guild))) {
                   await msg.author.dmChannel
                     .send(`User not found in the corresponding ${guild.name}.`)
                     .then((m) => setTimeout(() => m.delete(), 5000));

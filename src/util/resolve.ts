@@ -8,7 +8,10 @@ import {
 } from "discord.js";
 import { bot } from "..";
 
-export function resolveMember(value: string, guild: Guild): GuildMember {
+export function resolveMember(
+  value: string,
+  guild: Guild
+): Promise<GuildMember> | GuildMember {
   if (
     value.slice(0, 2) == "<@" &&
     value[20] == ">" &&
@@ -17,7 +20,7 @@ export function resolveMember(value: string, guild: Guild): GuildMember {
     value = value.slice(2, 20);
   }
   return (
-    guild.members.cache.get(value) ??
+    guild.members.fetch(value) ??
     guild.members.cache.find(
       (member) => member.user.username == value || member.nickname == value
     )
