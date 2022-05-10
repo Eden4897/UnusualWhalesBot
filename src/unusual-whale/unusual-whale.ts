@@ -51,7 +51,15 @@ export let pages: {
   historicalFlow: null,
 };
 
-export async function startScraper(): Promise<void> {
+export async function scraperRestartLoop() {
+  while (1) {
+    const browser = await startScraper();
+    await new Promise((res) => setTimeout(res, 1000 * 60 * 60));
+    browser.close();
+  }
+}
+
+export async function startScraper(): Promise<puppeteer.Browser> {
   const browser: puppeteer.Browser = await puppeteer.launch(
     HEADLESS
       ? {
@@ -245,6 +253,7 @@ export async function startScraper(): Promise<void> {
   loginPage.close();
 
   console.log("Setup Completed");
+  return browser;
 }
 
 async function login(browser: puppeteer.Browser): Promise<puppeteer.Page> {
