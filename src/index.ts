@@ -1,5 +1,6 @@
 import { Client, Collection, GuildMember, Message, User } from "discord.js";
 import { readdir } from "fs";
+import path = require("path");
 import { JSONMap } from "./util/file";
 import config from "./util/global";
 
@@ -109,20 +110,20 @@ export const commands: Collection<string, Command> = new Collection<
   Command
 >();
 
-readdir(`${__dirname}\\commands`, (err, files) => {
+readdir(path.join(__dirname, "commands"), (err, files) => {
   if (err) return console.error;
   files.forEach((file: string) => {
     if (!file.endsWith(`.js`)) return;
-    const command: Command = require(`${__dirname}\\commands\\${file}`).default;
+    const command: Command = require(path.join(__dirname, "commands", file)).default;
     commands.set(command.name, command);
   });
 });
 
-readdir(`${__dirname}\\events/`, (err, files) => {
+readdir(path.join(__dirname, "events"), (err, files) => {
   if (err) return console.error;
   files.forEach((file: string) => {
     if (!file.endsWith(`.js`)) return;
-    const event: () => any = require(`${__dirname}\\events\\${file}`).default;
+    const event: () => any = require(path.join(__dirname, "events", file)).default;
     const eventName: string = file.split(`.`)[0];
     bot.on(eventName, event.bind(null, bot));
   });
@@ -134,8 +135,22 @@ process.on("uncaughtException", function (err) {
   if (
     err
       .toString()
-      .startsWith("Error: Execution context is not available in detached frame")
+      .startsWith("Error: Execution context is not available in detached frame") ||
+    err
+      .toString()
+      .startsWith("ProtocolError: Protocol error (Page.createIsolatedWorld): No frame for given id found")
   )
     return;
-  console.error("Caught exception: " + err);
+  console.error(err.stack ?? err);
 });
+
+// setTimeout(function () {
+//   process.on("exit", function () {
+//       require("child_process").spawn(process.argv.shift(), process.argv, {
+//           cwd: process.cwd(),
+//           detached : true,
+//           stdio: "inherit"
+//       });
+//   });
+//   process.exit();
+// }, 60 * 60 * 1000);

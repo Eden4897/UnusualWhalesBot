@@ -30,14 +30,14 @@ async function observeNewHaltIPO(page: puppeteer.Page) {
   while (1) {
     await new Promise((res) => setTimeout(res, 10000));
     await page.reload();
-    await page.waitForSelector("tbody");
+    await page.waitForSelector("#router-root > div:nth-child(2) > div > div > div > div:nth-child(3) > div > div.rdg");
     const newData: HaltIPOInfo = await page.evaluate(() => {
-      const topItem = document.querySelector("tbody > tr:nth-child(1)");
+      const topItem = document.querySelector("#router-root > div:nth-child(2) > div > div > div > div:nth-child(3) > div > div.rdg > div:nth-child(2)");
       return {
-        Symbol: topItem.querySelector("td:nth-child(1)").textContent,
-        State: topItem.querySelector("td:nth-child(2)").textContent,
-        Reason: topItem.querySelector("td:nth-child(3)").textContent,
-        Time: topItem.querySelector("td:nth-child(4)").textContent,
+        Symbol: topItem.querySelector(":nth-child(2)").textContent,
+        State: topItem.querySelector(":nth-child(3)").textContent,
+        Reason: topItem.querySelector(":nth-child(4)").textContent,
+        Time: topItem.querySelector(":nth-child(1)").textContent,
       };
     });
     if (previous == null) {

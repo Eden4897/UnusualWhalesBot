@@ -51,14 +51,6 @@ export let pages: {
   historicalFlow: null,
 };
 
-export async function scraperRestartLoop() {
-  while (1) {
-    const browser = await startScraper();
-    await new Promise((res) => setTimeout(res, 1000 * 60 * 60));
-    browser.close();
-  }
-}
-
 export async function startScraper(): Promise<puppeteer.Browser> {
   const browser: puppeteer.Browser = await puppeteer.launch(
     HEADLESS
@@ -261,26 +253,26 @@ async function login(browser: puppeteer.Browser): Promise<puppeteer.Page> {
   await page.goto("https://www.unusualwhales.com/login");
 
   await page.waitForSelector(
-    "#router-root > div:nth-child(3) > section > div > div > div > div > form > div:nth-child(1) > input"
+    "#router-root > div:nth-child(2) > section > div > div > div > div > form > div:nth-child(1) > input"
   );
   await page.type(
-    "#router-root > div:nth-child(3) > section > div > div > div > div > form > div:nth-child(1) > input",
+    "#router-root > div:nth-child(2) > section > div > div > div > div > form > div:nth-child(1) > input",
     WHALE_USER
   );
 
   await page.waitForSelector(
-    "#router-root > div:nth-child(3) > section > div > div > div > div > form > div.form-group.mb-5 > input"
+    "#router-root > div:nth-child(2) > section > div > div > div > div > form > div.form-group.mb-5 > input"
   );
   await page.type(
-    "#router-root > div:nth-child(3) > section > div > div > div > div > form > div.form-group.mb-5 > input",
+    "#router-root > div:nth-child(2) > section > div > div > div > div > form > div.form-group.mb-5 > input",
     WHALE_PWD
   );
 
   await page.waitForSelector(
-    "#router-root > div:nth-child(3) > section > div > div > div > div > div > button > div"
+    "#router-root > div:nth-child(2) > section > div > div > div > div > div > button > div"
   );
   await page.click(
-    "#router-root > div:nth-child(3) > section > div > div > div > div > div > button > div"
+    "#router-root > div:nth-child(2) > section > div > div > div > div > div > button > div"
   );
   await page.waitForNavigation();
 
