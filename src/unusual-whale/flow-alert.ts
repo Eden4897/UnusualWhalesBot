@@ -44,20 +44,20 @@ async function observeNewFlowAlert(page: puppeteer.Page) {
       );
       const info: FlowAlertInfo = {
         Date: topItem.querySelector("td:nth-child(1)").textContent,
-        Ticker: topItem.querySelector("td:nth-child(2)").textContent,
+        Ticker: topItem.querySelector("td:nth-child(3)").textContent,
         "\u200b": "\u200b",
         // Rule: topItem
         //   .querySelector("td:nth-child(3)")
         //   .textContent.replace(/[^A-Za-z0-9/$. ]/g, ""),
-        Strike: topItem.querySelector("td:nth-child(4)").textContent,
-        Contract: topItem.querySelector("td:nth-child(5)").textContent,
-        Expiry: topItem.querySelector("td:nth-child(6)").textContent,
-        DTE: topItem.querySelector("td:nth-child(7)").textContent,
-        "Stock Price": topItem.querySelector("td:nth-child(8)").textContent,
-        Spot: topItem.querySelector("td:nth-child(9)").textContent,
-        Size: topItem.querySelector("td:nth-child(10)").textContent,
-        "Total Premium": topItem.querySelector("td:nth-child(12)").textContent,
-        Volume: topItem.querySelector("td:nth-child(13)").textContent,
+        Strike: topItem.querySelector("td:nth-child(5)").textContent,
+        Contract: topItem.querySelector("td:nth-child(6)").textContent,
+        Expiry: topItem.querySelector("td:nth-child(7)").textContent,
+        DTE: topItem.querySelector("td:nth-child(8)").textContent,
+        "Stock Price": topItem.querySelector("td:nth-child(9)").textContent,
+        Spot: topItem.querySelector("td:nth-child(10)").textContent,
+        Size: topItem.querySelector("td:nth-child(11)").textContent,
+        "Total Premium": topItem.querySelector("td:nth-child(13)").textContent,
+        Volume: topItem.querySelector("td:nth-child(14)").textContent,
       };
       newFlowAlertResponse(info);
     });
